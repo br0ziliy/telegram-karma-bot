@@ -38,17 +38,17 @@ def handle_karma(msg,direction):
     delta = 31337
     if last: delta = now - float(last)
 
-    print "Handling karma {} from {} to {} (last handled: {} seconds ago)".format(direction, sname.encode('utf8'), duser, delta)
+    print u"Handling karma {} from {} to {} (last handled: {} seconds ago)".format(direction, sname.encode('utf8'), duser, delta)
     if duser.lower() == sname:
-        return "@{} public masturbation is not allowed.".format(sname)
+        return u"@{} public masturbation is not allowed.".format(sname)
     if delta < 120:
-        return "@{} cooldown: {} seconds left".format(sname, 120 - int(delta))
+        return u"@{} cooldown: {} seconds left".format(sname, 120 - int(delta))
     r.hset(duser,suser,time.time())
     if direction == 'up':
         r.hincrby(duser,'0karma_',1)
     elif direction == 'down':
         r.hincrby(duser,'0karma_',-1)
-    return "{} karma is now {}".format(duser, r.hget(duser,'0karma_'))
+    return u"{} karma is now {}".format(duser, r.hget(duser,'0karma_'))
 
 def get_rank(_for):
     vals = None
@@ -65,16 +65,19 @@ def get_rank(_for):
             limiter -= 1
         if limiter == 0:
             break
-    result = '=== Rating for "{0}" ===\r\n{1}'.format(_for.encode('utf8'), rank)
-    return result
+    return u'=== Rating for "{0}" ===\r\n{1}'.format(_for, rank)
 
 def handle(msg):
     chat_id = msg['chat']['id']
     chat_type = msg['chat']['type']
     try:
+        from_name = msg['from']['username']
+    except KeyError:
+        from_name = "UNKNOWN USER"
+    try:
         command = msg['text'].split()[0]
     except KeyError: # not a text message?
-        print "Not text message - ignoring: %s" % msg
+        print u"Not text message - ignoring: %s" % msg
         return
     param = None
     try:
@@ -82,8 +85,11 @@ def handle(msg):
     except IndexError:
         print "Command with no parameter"
         param = None
+    if param and param.isalnum():
+        print u"Bad param: {}. Will now curse sender.".format(param)
+        bot.sendMessage(chat_id, u"Look all, {} gay!".format(from_name))
     command = command.split('@')[0]
-    print "Got command: {} {} from: {}".format(command,param,msg['from']['username'].encode('utf8'))
+    print u"Got command: {} {} from: {}".format(command,param,from_name)
 
     if command == '/roll':
         bot.sendMessage(chat_id, random.randint(1,6))
@@ -98,7 +104,7 @@ def handle(msg):
         else: bot.sendMessage(chat_id, 'Usage: {} username'.format(command))
     elif command == '/help':
         if chat_type == "private":
-            bot.sendMessage(chat_id, help_msg)
+            bot.sendMessage(chat_id, help_msg, disable_web_page_preview=True)
         else:
             bot.sendMessage(chat_id, "Talk to me privately for help.")
 
