@@ -73,7 +73,7 @@ def handle(msg):
     try:
         from_name = msg['from']['username']
     except KeyError:
-        from_name = "UNKNOWN USER"
+        from_name = "UNKNOWN_USER"
     try:
         command = msg['text'].split()[0]
     except KeyError: # not a text message?
@@ -86,9 +86,6 @@ def handle(msg):
     except IndexError:
         print "Command with no parameter"
         param = None
-    if param and param.isalnum():
-        print u"Bad param: {}. Will now curse sender.".format(param)
-        bot.sendMessage(chat_id, u"Don't mess with me, @{}!".format(from_name))
     command = command.split('@')[0]
     print "Got command: {} {} from: {}".format(command,param,from_name)
 
