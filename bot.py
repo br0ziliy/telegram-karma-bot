@@ -56,7 +56,7 @@ def get_rank(_for):
     limiter = 10
     if _for:
         if _for.startswith('@'): _for = _for[1:]
-        keys = r.keys(u'*{0}*'.format(_for))
+        keys = r.keys('*{0}*'.format(_for))
     if len(keys) > 0: rank = ''
     for key in keys:
         if r.type(key) == 'hash':
@@ -65,7 +65,7 @@ def get_rank(_for):
             limiter -= 1
         if limiter == 0:
             break
-    return u'=== Rating for "{0}" ===\r\n{1}'.format(_for, rank)
+    return '=== Rating for "{0}" ===\r\n{1}'.format(_for, rank)
 
 def handle(msg):
     chat_id = msg['chat']['id']
@@ -82,14 +82,15 @@ def handle(msg):
     param = None
     try:
         param = msg['text'].split()[1]
+        param = param.encode('utf8')
     except IndexError:
         print "Command with no parameter"
         param = None
-    if param and param.encode('utf8').isalnum():
+    if param and param.isalnum():
         print u"Bad param: {}. Will now curse sender.".format(param)
-        bot.sendMessage(chat_id, u"Look all, @{} gay!".format(from_name))
+        bot.sendMessage(chat_id, u"Don't mess with me, @{}!".format(from_name))
     command = command.split('@')[0]
-    print u"Got command: {} {} from: {}".format(command,param,from_name)
+    print "Got command: {} {} from: {}".format(command,param,from_name)
 
     if command == '/roll':
         bot.sendMessage(chat_id, random.randint(1,6))
