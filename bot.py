@@ -85,9 +85,9 @@ def handle(msg):
     except IndexError:
         print "Command with no parameter"
         param = None
-    if param and param.isalnum():
+    if param and param.encode('utf8').isalnum():
         print u"Bad param: {}. Will now curse sender.".format(param)
-        bot.sendMessage(chat_id, u"Look all, {} gay!".format(from_name))
+        bot.sendMessage(chat_id, u"Look all, @{} gay!".format(from_name))
     command = command.split('@')[0]
     print u"Got command: {} {} from: {}".format(command,param,from_name)
 
