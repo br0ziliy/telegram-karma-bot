@@ -39,7 +39,7 @@ def handle_karma(msg,direction):
     if last: delta = now - float(last)
 
     print u"Handling karma {} from {} to {} (last handled: {} seconds ago)".format(direction, sname.encode('utf8'), duser, delta)
-    if duser.lower() == sname:
+    if duser == sname:
         return u"@{} public masturbation is not allowed.".format(sname)
     if delta < 120:
         return u"@{} cooldown: {} seconds left".format(sname, 120 - int(delta))
